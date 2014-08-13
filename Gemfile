@@ -26,6 +26,8 @@ gem 'sdoc', '~> 0.4.0',          group: :doc
 # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
 gem 'spring',        group: :development
 
+gem "resque", "~> 2.0.0.pre.1", github: "resque/resque"
+
 group :test do
   gem 'faker'
   gem 'chronic'
