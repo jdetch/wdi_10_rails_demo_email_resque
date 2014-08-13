@@ -115,6 +115,49 @@ These send email messages will be pulled out of the __queue__ and processed by _
 
 We are going to start off with the completed rails action mailer lesson. From [Rails EMail Demo](https://github.com/ga-wdi-boston/wdi_10_rails_demo_email) github repo. This is from the 'done' branch.
 
+
+#### Add a Reque Worker 
+
+##### Modify the app/controllers/users_controller.rb file.
+
+This will replace a __synchronous call__ to send an email with a _asynchronous call__. Resque.enqueue will push a messages into a Resque, backed by Redis, queue. 
+
+The controller is acting as a __publisher__.  
+
+```
+def create
+ ...
+ # UserMailer.signup_confirmation(@user).deliver
+ Resque.enqueue(MailWorker, @user.id)
+ ... 
+end
+```
+
+
+##### Create a file app/workers/mail_worker.rb (Setup a Worker/Subscriber)
+
+This will create a Plain Old Ruby Object (PORO) that will be a Resque Worker.
+
+A Worker subscribes to a queue pulling messages off that queue and processing them. In this case we will be pulling messages that direct the Workers to mail signup confirmations.
+
+We MUST set a queue that the messages will be published into and subscribers/workers will pull off of.
+
+The worker/s are __subscribers__. 
+
+```
+class MailWorker
+
+  @queue = :mailer_queue
+
+  def self.perform(user_id)
+    @user = User.find(user_id)
+    # Send sign up email
+    UserMailer.signup_confirmation(@user).deliver
+  end
+end
+
+```
+
 #### Install Redis and start it.
 
 This will start Redis locally on port 6379.
