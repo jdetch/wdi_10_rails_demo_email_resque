@@ -30,7 +30,8 @@ class UsersController < ApplicationController
       if @user.save
 
         # Send sign up email
-        UserMailer.signup_confirmation(@user).deliver
+        # UserMailer.signup_confirmation(@user).deliver
+        Resque.enqueue(MailWorker, @user.id)
 
         format.html { redirect_to @user, notice: 'User was successfully created.' }
         format.json { render :show, status: :created, location: @user }

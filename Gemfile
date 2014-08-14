@@ -55,4 +55,6 @@ group :development do
 
 end
 
+gem "resque", "~> 2.0.0.pre.1", github: "resque/resque"
+
 gem 'dotenv-rails', :groups => [:development, :test]
